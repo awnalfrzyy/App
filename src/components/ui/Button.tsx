@@ -22,7 +22,7 @@ export default function Button({
         {
             "bg-blue-500": variant === "primary",
             "bg-gray-500": variant === "secondary",
-            "bg-transparent border border-gray-400 ": variant === "outline",
+            "bg-transparent border border-gray-400 px-8 ": variant === "outline",
             "bg-red-500": variant === "danger",
             "bg-white border border-neutral-400 w-full": variant === "sosial",
             "bg-transparent p-0": variant === "link",
@@ -33,7 +33,7 @@ export default function Button({
     const textClasses = clsx("font-semibold text-center", {
         "text-white": variant !== "sosial",
         "text-black": variant === "sosial",
-        "text-neutral-500": variant === "outline",
+        "text-neutral-900": variant === "outline",
         "text-blue-500 underline": variant === "link",
     });
 
