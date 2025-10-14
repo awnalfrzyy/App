@@ -33,7 +33,7 @@ export default function ScreenStepOne({ navigation, route, onFinish }: Props) {
                     <View className="flex flex-col gap-2">
                         <Button
                             variant="outline"
-                            className="rounded-full"
+                            className="rounded-full "
                             onPress={onFinish}
                         >
                             Masuk Toko

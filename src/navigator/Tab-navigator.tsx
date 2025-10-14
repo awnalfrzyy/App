@@ -25,7 +25,7 @@ const TabNavigator: React.FC = () => {
         <Tab.Navigator
             screenOptions={({ route }) => ({
                 headerShown: false,
-                tabBarActiveTintColor: '#254EDB',
+                tabBarActiveTintColor: '#00764F',
                 tabBarInactiveTintColor: '#d9d9d9',
                 tabBarStyle: {
                     position: 'absolute',

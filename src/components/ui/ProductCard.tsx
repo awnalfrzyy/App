@@ -1,40 +1,7 @@
-/**
- * 🛍️ ProductCard Component — clean Tokopedia style
- * -----------------------------------------------
- * ✅ Tujuan:
- *    Komponen ini digunakan untuk menampilkan produk/menu dengan tampilan seperti e-commerce (Tokopedia / GoFood).
- *    Gambar besar di atas, teks dan harga di bawah, background transparan.
- *
- * ✅ Props:
- *    - image: string → URL gambar produk
- *    - title: string → Nama produk
- *    - type: string → Kategori (misal: Coffee, Non Coffee, Dessert)
- *    - price: number → Harga dalam angka (misal: 25000)
- *    - rating: number → Nilai rating (misal: 4.8)
- *    - className?: string → Opsional tambahan styling pakai NativeWind
- *
- * ✅ Style Notes:
- *    - Card transparan, dua kolom per baris (w-[46%])
- *    - Gambar dibulatkan dan di-cover penuh
- *    - Badge rating muncul di pojok kiri atas (background hitam transparan)
- *    - Warna harga: hijau (#16A34A) → khas e-commerce vibes
- *
- * ✅ Contoh Penggunaan:
- *    <ProductCard
- *      image="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
- *      title="Cappuccino"
- *      type="Coffee"
- *      price={25000}
- *      rating={4.8}
- *    />
- *
- * ✅ Catatan:
- *    Komponen ini cocok buat grid product list.
- *    Kalau mau animasi shimmer loading, bisa digabung dengan komponen Skeleton.
- */
-
 import { View, Text, Image } from "react-native";
 import { Star, Heart } from "lucide-react-native";
+import { clsx } from "clsx";
+import Skeleton from "./skeleton";
 
 interface CardProps {
     image: string;
@@ -42,6 +9,8 @@ interface CardProps {
     type: string;
     price: number;
     rating: number;
+    variant?: "primary" | "secondary"; // primary = vertical, secondary = horizontal
+    isLoading?: boolean;
     className?: string;
 }
 
@@ -51,39 +20,70 @@ export default function ProductCard({
     type,
     price,
     rating,
+    variant = "primary",
+    isLoading = false,
     className = "",
 }: CardProps) {
-    return (
-        <View
-            className={`w-[48%] bg-transparent mb-5 ${className}`}
-        >
-            {/* 🖼️ Product Image */}
-            <View className="relative w-full h-48 rounded-2xl overflow-hidden bg-gray-100">
-                <Image
-                    source={{ uri: image }}
-                    className="w-full h-full rounded-2xl"
-                    resizeMode="cover"
-                />
-                <View className="absolute top-2 right-2 bg-transparent p-2 rounded-full flex-row items-center">
-                    <Heart size={20} color="red" />
+    if (isLoading) {
+        // skeleton
+        return variant === "primary" ? (
+            <View className={clsx("w-[48%] mb-4", className)}>
+                <Skeleton className="w-full h-48 rounded-2xl mb-2" />
+                <Skeleton className="h-4 w-3/4 mb-1 rounded-md" />
+                <Skeleton className="h-3 w-1/2 rounded-md" />
+                <Skeleton className="h-4 w-1/3 rounded-md" />
+            </View>
+        ) : (
+            <View className={clsx("w-full flex-row gap-3 mb-4", className)}>
+                <Skeleton className="w-24 h-24 rounded-2xl" />
+                <View className="flex-1 justify-between py-1">
+                    <Skeleton className="h-4 w-3/4 mb-2 rounded-md" />
+                    <Skeleton className="h-3 w-1/2 mb-1 rounded-md" />
+                    <Skeleton className="h-4 w-1/3 rounded-md" />
                 </View>
             </View>
-            <View className="mt-2 gap-1">
+        );
+    }
+
+    // actual card
+    const containerClasses = clsx(
+        "rounded-2xl overflow-hidden bg-white",
+        variant === "primary" ? "w-[48%] mb-5" : "w-full flex-row gap-3 mb-4",
+        className
+    );
+
+    const imageClasses = clsx(
+        variant === "primary" ? "w-full h-48 rounded-2xl" : "w-24 h-24 rounded-2xl",
+        "bg-gray-100"
+    );
+
+    return (
+        <View className={containerClasses}>
+            <View className={clsx("relative", imageClasses)}>
+                <Image source={{ uri: image }} className={clsx(imageClasses)} resizeMode="cover" />
+                <View className="absolute top-1 right-1 bg-transparent p-1 rounded-full">
+                    <Heart size={16} color="red" />
+                </View>
+            </View>
+
+            <View className={clsx(variant === "primary" ? "mt-2 gap-1" : "flex-1 justify-between")}>
                 <View className="flex-row justify-between items-start w-full">
                     <Text
-                        className="text-xl font-semibold text-gray-900 flex-shrink w-4/5"
+                        className={clsx(
+                            "text-lg font-semibold text-gray-900 flex-shrink",
+                            variant === "primary" ? "w-full" : "w-4/5"
+                        )}
                     >
                         {title}
                     </Text>
-
                     <View className="flex-row items-center ml-2">
-                        <Star size={16} color="yellow" fill="yellow" />
+                        <Star size={14} color="yellow" fill="yellow" />
                         <Text className="text-sm text-gray-600 ml-1">{rating.toFixed(1)}</Text>
                     </View>
                 </View>
 
-                <Text className="text-xs text-gray-500 mb-1">{type}</Text>
-                <Text className="text-[14px] font-bold text-green-600">
+                <Text className="text-xs text-gray-500">{type}</Text>
+                <Text className="text-sm font-bold text-green-600">
                     Rp{price.toLocaleString("id-ID")}
                 </Text>
             </View>

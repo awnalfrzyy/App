@@ -4,6 +4,8 @@ import { View, ScrollView, Text } from 'react-native'
 import SearchInput from "../ui/Search-input";
 import { useState } from "react";
 import Header from "../ui/Header";
+import { clsx } from "clsx";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Products = [
     {
@@ -75,11 +77,18 @@ const Btn = [
 export default function MenuScreen() {
 
     const [query, setQuery] = useState("")
+    const insets = useSafeAreaInsets();
 
     return (
-        <ScrollView>
+        <ScrollView
+            className="bg-white"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+                paddingBottom: insets.bottom + 20,
+                flexGrow: 1,
+            }}>
             <View className="px-4 flex-1 bg-white">
-                <View className="py-5">
+                <View className="py-10">
                     <Header title="Menu" />
                 </View>
                 <View className="flex-1 mb-4">
@@ -93,9 +102,13 @@ export default function MenuScreen() {
                 </View>
                 <View className="flex flex-col gap-3 mb-6 py-1">
                     <Text className="text-lg font-medium">Category</Text>
-                    <View className="flex  flex-row gap-2">
+                    <View className="flex flex-row gap-2 mb-6">
                         {Btn.map((item, index) => (
-                            <Button key={index} variant="outline" className="px-10 py-2 rounded-full  ">
+                            <Button
+                                key={index}
+                                variant={item.title === "Coffee" ? "primary" : "secondary"} // ❌ kuncinya di sini
+                                className={clsx("px-5 rounded-full", item.title === "Coffee" ? "text-white" : "text-neutral-900")}
+                            >
                                 {item.title}
                             </Button>
                         ))}
