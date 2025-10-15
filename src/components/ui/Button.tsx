@@ -28,7 +28,7 @@ export default function Button({
 
     const textColors: Record<ButtonProps["variant"], string> = {
         primary: "text-white",
-        secondary: "text-white",
+        secondary: "text-neutral-700",
         outline: "text-neutral-100",
         danger: "text-white",
         sosial: "text-black",

@@ -2,15 +2,13 @@ import { View, ScrollView } from "react-native";
 import Header from "../ui/Header";
 import FavCard from "../ui/Fav-card";
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { HomeStackParamList } from "@/navigator/Home-navigator";
 import Button from "../ui/Button";
 
-
-type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Favorit'>;
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList, "Favorit">;
 
 export default function FavoritScreen() {
-
     const navigation = useNavigation<NavigationProp>();
 
     const favoriteItems = [
@@ -28,7 +26,7 @@ export default function FavoritScreen() {
         },
         {
             id: 4,
-            image: "https://images.unsplash.com/photo-1576402187878-974f70c89045",
+            image: "https://images.unsplash.com/photo-1580910051073-b7b36dffeb1e",
         },
     ];
 
@@ -37,14 +35,12 @@ export default function FavoritScreen() {
             <View className="px-4 py-4">
                 <Header title="Favorit" />
 
-                <View className="mt-4 flex flex-wrap flex-row justify-between gap-y-4">
+                {/* Grid 2 kolom */}
+                <View className="mt-4 flex-row flex-wrap justify-between">
                     {favoriteItems.map((item) => (
-                        <Button variant="primary"
-                            key={item.id}
-                            className="mr-3"
-                            onPress={() => navigation.navigate('Favorit' as never)}>
+                        <View key={item.id} className="w-[48%] mb-4">
                             <FavCard image={item.image} />
-                        </Button>
+                        </View>
                     ))}
                 </View>
             </View>
