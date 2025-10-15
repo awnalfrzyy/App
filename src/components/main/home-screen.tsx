@@ -1,16 +1,4 @@
-/**
- * 🏠 HomeScreen — halaman utama
- * -----------------------------
- * ✅ Fitur:
- *   - Search bar dengan tombol cari
- *   - Promo card horizontal
- *   - Kategori button looping
- *   - Rekomendasi produk pakai <ProductCard /> (vibes Tokopedia)
- *
- * ⚙️ Note:
- *   - Pastikan `ProductCard.tsx` ada di `../components/ProductCard`
- *   - Gunakan NativeWind agar className berfungsi
- */
+
 
 import { View, Text, ScrollView } from "react-native";
 import Button from "../ui/Button";
@@ -20,6 +8,12 @@ import { MessageCircle, Heart } from "lucide-react-native";
 import { useState } from "react";
 import { clsx } from "clsx";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from "@/navigator/Home-navigator";
+
+
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Favorit'>;
 
 const Btn = [
     { title: "Coffee" },
@@ -68,8 +62,10 @@ const Products = [
 ];
 
 export default function HomeScreen() {
+
     const [query, setQuery] = useState("");
     const insets = useSafeAreaInsets();
+    const navigation = useNavigation<NavigationProp>();
 
     return (
         <ScrollView className="flex-1 bg-white px-4 pt-8"
@@ -93,8 +89,10 @@ export default function HomeScreen() {
                     />
                 </View>
                 <View className="flex flex-row gap-1">
-                    <Button variant="secondary" className="rounded-full">
+                    <Button variant="secondary" className="rounded-full"
+                        onPress={() => navigation.navigate('Favorit' as never)}>
                         <Heart size={23} color="red" />
+
                     </Button>
                     <Button variant="secondary" className="rounded-full">
                         <MessageCircle size={23} color="#00746F" />

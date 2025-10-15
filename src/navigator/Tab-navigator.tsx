@@ -8,6 +8,7 @@ import Homes from '@/screen/main/home';
 import Menu from '@/screen/main/menu';
 import Notification from '@/screen/main/notificatrion';
 import Profil from '@/screen/main/profil';
+import HomeNavigator from './Home-navigator';
 
 export type TabParamList = {
     Homes: undefined;
@@ -62,10 +63,10 @@ const TabNavigator: React.FC = () => {
         >
             <Tab.Screen
                 name="Homes"
-                component={Homes}
+                component={HomeNavigator}
                 options={({ route }) => {
-                    const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
-                    const HIDDEN_TABS = ['BAA', 'DoctorDetail', 'ChatDetail', 'Payment'];
+                    const routeName = getFocusedRouteNameFromRoute(route) ?? 'Homes';
+                    const HIDDEN_TABS = ['Favorit'];
 
                     if (HIDDEN_TABS.includes(routeName)) {
                         return {
