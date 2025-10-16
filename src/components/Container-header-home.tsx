@@ -7,6 +7,12 @@ import { View, Text } from "react-native";
 import Button from "./ui/Button";
 import { Heart, MessageCircle } from 'lucide-react-native'
 
+interface ComponentProps {
+    btn: boolean;
+    search: boolean;
+    header: boolean;
+}
+
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Favorit'>;
 

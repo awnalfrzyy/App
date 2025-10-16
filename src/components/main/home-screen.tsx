@@ -100,8 +100,8 @@ export default function HomeScreen() {
 
             <ScrollView
                 horizontal
-                showsHorizontalScrollIndicator={false} // biar scrollbar gak muncul
-                contentContainerStyle={{}} // padding kiri kanan
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{}}
             >
                 <View className="flex flex-row gap-2 mb-6">
                     {Btn.map((item, index) => (
