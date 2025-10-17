@@ -1,11 +1,13 @@
 import ProductCard from "../ui/ProductCard";
 import Button from "../ui/Button";
-import { View, ScrollView, Text } from 'react-native'
+import { View, ScrollView, Text } from "react-native";
 import SearchInput from "../ui/Search-input";
 import { useState } from "react";
 import Header from "../ui/Header";
 import { clsx } from "clsx";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import BottomSheet from "@/components/ui/Button-sheet";
+import { useSharedValue } from "react-native-reanimated";
 
 const Products = [
     {
@@ -75,58 +77,90 @@ const Btn = [
 ];
 
 export default function MenuScreen() {
-
-    const [query, setQuery] = useState("")
+    const [query, setQuery] = useState("");
+    const [selected, setSelected] = useState<any>(null);
+    const isOpen = useSharedValue(false);
     const insets = useSafeAreaInsets();
 
+    const handleCardPress = (item: any) => {
+        setSelected(item);
+        isOpen.value = true;
+    };
+
     return (
-        <ScrollView
-            className="bg-white"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                paddingBottom: insets.bottom + 20,
-                flexGrow: 1,
-            }}>
-            <View className="px-4 flex-1 bg-white">
-                <View className="py-10">
-                    <Header title="Menu" />
-                </View>
-                <View className="flex-1 mb-4">
-                    <SearchInput
-                        placeholder="Cari menu favorit kamu..."
-                        value={query}
-                        onChangeText={setQuery}
-                        onClear={() => setQuery("")}
-                        className="mr-3 rounded-full"
-                    />
-                </View>
-                <View className="flex flex-col gap-3 mb-6 py-1">
-                    <Text className="text-lg font-medium">Category</Text>
-                    <View className="flex flex-row gap-2 mb-6">
-                        {Btn.map((item, index) => (
-                            <Button
-                                key={index}
-                                variant={item.title === "Coffee" ? "primary" : "secondary"} // ❌ kuncinya di sini
-                                className={clsx("px-5 rounded-full", item.title === "Coffee" ? "text-white" : "text-neutral-900")}
-                            >
-                                {item.title}
-                            </Button>
+        <>
+            <ScrollView
+                className="bg-white z-10"
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: insets.bottom + 20,
+                    flexGrow: 1,
+                }}
+            >
+                <View className="px-4 flex-1 bg-white">
+                    <View className="py-10">
+                        <Header title="Menu" />
+                    </View>
+
+                    <View className="flex-1 mb-4">
+                        <SearchInput
+                            placeholder="Cari menu favorit kamu..."
+                            value={query}
+                            onChangeText={setQuery}
+                            onClear={() => setQuery("")}
+                            className="mr-3 rounded-full"
+                        />
+                    </View>
+
+                    <View className="flex flex-col gap-3 mb-6 py-1">
+                        <Text className="text-lg font-medium">Category</Text>
+                        <View className="flex flex-row gap-2 mb-6">
+                            {Btn.map((item, index) => (
+                                <Button
+                                    key={index}
+                                    variant={item.title === "Coffee" ? "primary" : "secondary"}
+                                    className={clsx(
+                                        "px-5 rounded-full",
+                                        item.title === "Coffee" ? "text-white" : "text-neutral-900"
+                                    )}
+                                >
+                                    {item.title}
+                                </Button>
+                            ))}
+                        </View>
+                    </View>
+
+                    <View className="flex flex-row flex-wrap justify-between">
+                        {Products.map((item, i) => (
+                            <ProductCard
+                                key={i}
+                                image={item.image}
+                                title={item.title}
+                                type={item.type}
+                                price={item.price}
+                                rating={item.rating}
+                                onPress={() => handleCardPress(item)} // 🧠 di sini kuncinya
+                            />
                         ))}
                     </View>
                 </View>
-                <View className="flex flex-row flex-wrap justify-between">
-                    {Products.map((item, i) => (
-                        <ProductCard
-                            key={i}
-                            image={item.image}
-                            title={item.title}
-                            type={item.type}
-                            price={item.price}
-                            rating={item.rating}
-                        />
-                    ))}
-                </View>
-            </View>
-        </ScrollView>
-    )
-};
+            </ScrollView>
+
+            {/* 🧩 BottomSheet muncul ketika card ditekan */}
+            <BottomSheet isOpen={isOpen} toggleSheet={() => (isOpen.value = !isOpen.value)} >
+                {selected ? (
+                    <View className="p-4">
+                        <Text className="text-xl font-bold mb-2">{selected.title}</Text>
+                        <Text className="text-gray-500 mb-3">{selected.type}</Text>
+                        <Text className="text-green-600 text-lg font-semibold mb-3">
+                            Rp{selected.price.toLocaleString("id-ID")}
+                        </Text>
+                        <Text className="text-gray-700">
+                            Ini bottom sheet dinamis. Lo bisa isi deskripsi produk, tombol beli, dsb.
+                        </Text>
+                    </View>
+                ) : null}
+            </BottomSheet>
+        </>
+    );
+}

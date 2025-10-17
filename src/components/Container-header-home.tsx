@@ -43,8 +43,10 @@ export default function ContainerHeaderHome() {
                         <Heart size={23} color="red" />
 
                     </Button>
-                    <Button variant="secondary" className="rounded-full">
-                        <MessageCircle size={23} color="#00746F" />
+                    <Button variant="secondary" className="rounded-full"
+                        onPress={() => navigation.navigate('Detail' as never)}>
+                        <MessageCircle size={23} color="#00746F"
+                        />
                     </Button>
                 </View>
             </View>

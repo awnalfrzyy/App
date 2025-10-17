@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { Home, Calendar, Clock, User } from 'lucide-react-native';
+import { useBottomSheet } from '@/context/ButtonSheetContext';
 
 import Homes from '@/screen/main/home';
 import Menu from '@/screen/main/menu';
@@ -21,6 +22,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabNavigator: React.FC = () => {
     const insets = useSafeAreaInsets();
+    const { isTabHidden } = useBottomSheet();
 
     return (
         <Tab.Navigator
@@ -29,6 +31,7 @@ const TabNavigator: React.FC = () => {
                 tabBarActiveTintColor: '#00764F',
                 tabBarInactiveTintColor: '#d9d9d9',
                 tabBarStyle: {
+                    display: isTabHidden ? "none" : "flex",
                     position: 'absolute',
                     backgroundColor: '#fff',
                     height: 60 + insets.bottom, // biar aman di semua device
@@ -39,6 +42,9 @@ const TabNavigator: React.FC = () => {
                     elevation: 0,
                     shadowOpacity: 0,
                 },
+
+                // 🔥 hide/show otomatis
+
                 tabBarIcon: ({ color }) => {
                     let IconComponent: React.FC<{ color: string; size?: number }> = Home;
 
@@ -66,7 +72,7 @@ const TabNavigator: React.FC = () => {
                 component={HomeNavigator}
                 options={({ route }) => {
                     const routeName = getFocusedRouteNameFromRoute(route) ?? 'Homes';
-                    const HIDDEN_TABS = ['Favorit'];
+                    const HIDDEN_TABS = ['Favorit', 'Detail'];
 
                     if (HIDDEN_TABS.includes(routeName)) {
                         return {

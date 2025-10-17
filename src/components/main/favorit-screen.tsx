@@ -5,11 +5,15 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { HomeStackParamList } from "@/navigator/Home-navigator";
 import Button from "../ui/Button";
+import BottomDrawer, { BottomDrawerRef } from '@/components/ui/drawer';
+import { useRef } from "react";
+
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList, "Favorit">;
 
 export default function FavoritScreen() {
     const navigation = useNavigation<NavigationProp>();
+    const drawerRef = useRef<BottomDrawerRef>(null);
 
     const favoriteItems = [
         {
@@ -31,19 +35,31 @@ export default function FavoritScreen() {
     ];
 
     return (
-        <ScrollView className="flex-1 bg-white">
-            <View className="px-4 py-4">
-                <Header title="Favorit" />
+        <>
+            <ScrollView className="flex-1 bg-white">
+                <View className="px-4 py-4">
+                    <Header title="Favorit" />
 
-                {/* Grid 2 kolom */}
-                <View className="mt-4 flex-row flex-wrap justify-between">
-                    {favoriteItems.map((item) => (
-                        <View key={item.id} className="w-[48%] mb-4">
-                            <FavCard image={item.image} />
-                        </View>
-                    ))}
+                    {/* Grid 2 kolom */}
+                    <View className="mt-4 flex-row flex-wrap justify-between">
+                        {favoriteItems.map((item) => (
+                            <View key={item.id} className="w-[48%] mb-4">
+                                <FavCard image={item.image} />
+                            </View>
+                        ))}
+                    </View>
+
+                    <Button
+                        variant="primary"
+                        onPress={() => drawerRef.current?.open()}
+                    >
+                        Buka Drawer
+                    </Button>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+
+            {/* 🪄 Tambahkan ini di luar ScrollView */}
+            <BottomDrawer ref={drawerRef} />
+        </>
     );
 }

@@ -1,20 +1,13 @@
-
-
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, Text, ScrollView, Image } from 'react-native';
 import Button from "../ui/Button";
-import SearchInput from "../ui/Search-input";
 import ProductCard from "@/components/ui/ProductCard";
-import { MessageCircle, Heart } from "lucide-react-native";
+import { useBottomSheet } from "@/context/ButtonSheetContext";
 import { useState } from "react";
 import { clsx } from "clsx";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { HomeStackParamList } from "@/navigator/Home-navigator";
-import ContainerPerkenalan from "../Container-perkenalan";
 import ContainerHeaderHome from "../Container-header-home";
-
-type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Favorit'>;
+import BottomSheet from "../ui/Button-sheet";
+import { MessageCircle } from "lucide-react-native";
 
 const Btn = [
     { title: "Coffee" },
@@ -63,128 +56,161 @@ const Products = [
 ];
 
 export default function HomeScreen() {
-
     const insets = useSafeAreaInsets();
-    const navigation = useNavigation<NavigationProp>();
+    const [selected, setSelected] = useState<any>(null);
+    const { isOpen, openSheet, closeSheet, hideTabBar, showTabBar } = useBottomSheet();
+
+    const handleCardPress = (item: any) => {
+        setSelected(item);
+        hideTabBar(); // 🔥 sembunyiin tab
+        openSheet(); // buka sheet
+    };
+
+    const handleClose = () => {
+        closeSheet(); // tutup sheet
+        showTabBar(); // munculin tab lagi
+        setSelected(null);
+    };
 
     return (
-        <ScrollView className="flex-1 bg-white px-4 pt-8"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                paddingBottom: insets.bottom + 80,
-                flexGrow: 1,
-            }} >
-
-            <View>
-                <ContainerHeaderHome />
-            </View>
-
-            <View className="mb-6">
-                <Text className="text-lg font-semibold mb-3 text-gray-800">
-                    Promo Hari Ini
-                </Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {Promo.map((item, index) => (
-                        <View
-                            key={index}
-                            className="w-[345px] h-52 mr-4 rounded-2xl justify-center items-center shadow"
-                            style={{ backgroundColor: item.color }}
-                        >
-                            <Text className="text-sm font-semibold text-gray-800 text-center px-2">
-                                {item.text}
-                            </Text>
-                        </View>
-                    ))}
-                </ScrollView>
-            </View>
-
+        <>
             <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{}}
+                className="flex-1 bg-white px-4 pt-8"
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: insets.bottom + 80,
+                    flexGrow: 1,
+                }}
             >
-                <View className="flex flex-row gap-2 mb-6">
-                    {Btn.map((item, index) => (
+                <View>
+                    <ContainerHeaderHome />
+                </View>
+
+                {/* Promo Section */}
+                <View className="mb-6">
+                    <Text className="text-lg font-semibold mb-3 text-gray-800">
+                        Promo Hari Ini
+                    </Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        {Promo.map((item, index) => (
+                            <View
+                                key={index}
+                                className="w-[345px] h-52 mr-4 rounded-2xl justify-center items-center shadow"
+                                style={{ backgroundColor: item.color }}
+                            >
+                                <Text className="text-sm font-semibold text-gray-800 text-center px-2">
+                                    {item.text}
+                                </Text>
+                            </View>
+                        ))}
+                    </ScrollView>
+                </View>
+
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View className="flex flex-row gap-2 mb-6">
+                        {Btn.map((item, index) => (
+                            <Button
+                                key={index}
+                                variant={item.title === "Coffee" ? "primary" : "secondary"}
+                                className={clsx(
+                                    "px-5 rounded-full",
+                                    item.title === "Coffee" ? "text-white" : "text-neutral-900"
+                                )}
+                            >
+                                {item.title}
+                            </Button>
+                        ))}
+                    </View>
+                </ScrollView>
+                <View className="mb-12">
+                    <Text className="text-lg font-semibold mb-3 text-gray-800">
+                        Rekomendasi Untuk Kamu
+                    </Text>
+                    <View className="flex flex-row flex-wrap justify-between ">
+                        {Products.map((item, i) => (
+                            <ProductCard
+                                key={i}
+                                image={item.image}
+                                title={item.title}
+                                type={item.type}
+                                price={item.price}
+                                rating={item.rating}
+                                onPress={() => handleCardPress(item)}
+                            />
+                        ))}
+                    </View>
+                </View>
+
+                {/* Bantuan */}
+                <View className="bg-[#00764F] flex-row justify-between items-center rounded-2xl p-4 mt-6 shadow-md">
+                    <View className="pr-3">
+                        <Text className="text-white text-lg font-semibold mb-1">
+                            Butuh Bantuan?
+                        </Text>
+                        <Text className="text-white/80 text-sm mb-3">
+                            Solusi cepat ada di Pusat Bantuan 💬
+                        </Text>
+
                         <Button
-                            key={index}
-                            variant={item.title === "Coffee" ? "primary" : "secondary"} // ❌ kuncinya di sini
-                            className={clsx("px-5 rounded-full", item.title === "Coffee" ? "text-white" : "text-neutral-900")}
+                            variant="secondary"
+                            className="bg-white rounded-full"
                         >
-                            {item.title}
+                            <Text className="text-[#00764F] font-semibold text-sm">
+                                Cek Pusat Bantuan
+                            </Text>
                         </Button>
-                    ))}
+                    </View>
+
+                    <Image
+                        source={{
+                            uri: "https://img.icons8.com/plasticine/100/online-store.png",
+                        }}
+                        className="w-20 h-20"
+                        resizeMode="contain"
+                    />
                 </View>
             </ScrollView>
 
-            <View className="mb-12">
-                <Text className="text-lg font-semibold mb-3 text-gray-800">
-                    Rekomendasi Untuk Kamu
-                </Text>
-                <View className="flex flex-row flex-wrap justify-between ">
-                    {Products.map((item, i) => (
-                        <ProductCard
-                            key={i}
-                            image={item.image}
-                            title={item.title}
-                            type={item.type}
-                            price={item.price}
-                            rating={item.rating}
-                        />
-                    ))}
-                </View>
-            </View>
-            <View className="mb-12">
-                <Text className="text-lg font-semibold mb-3 text-gray-800">
-                    Rekomendasi Untuk Kamu
-                </Text>
+            {/* Bottom Sheet */}
+            {isOpen && (
+                <BottomSheet isOpen={isOpen} toggleSheet={handleClose}
+                    style={{
+                        paddingBottom: insets.bottom,
+                    }}>
+                    <View className="p-1 gap-4 max-h-[80%]">
+                        {selected?.image && (
+                            <View className="w-full aspect-[4/3]">
+                                <Image
+                                    source={{ uri: selected.image }}
+                                    className="w-full h-full rounded-2xl"
+                                    resizeMode="cover"
+                                />
+                            </View>
+                        )}
+                        <View className='mt-2 mb-10 gap-3'>
+                            <Text className="text-3xl font-bold">{selected?.title}</Text>
+                            <Text className="text-gray-700 text-2xl font-black">
+                                Rp. {selected?.price?.toLocaleString("id-ID")}
+                            </Text>
+                            <Text>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, suscipit!
+                            </Text>
+                        </View>
+                        <View className="flex flex-row items-center gap-2 w-full">
+                            <Button onPress={handleClose} variant="primary" className="w-auto">
+                                <MessageCircle size={18} color="#ffffff" />
+                            </Button>
 
-                <View className="flex flex-row flex-wrap justify-between">
-                    {Products.map((item, i) => (
-                        <ProductCard
-                            variant="secondary"
-                            key={i}
-                            image={item.image}
-                            title={item.title}
-                            type={item.type}
-                            price={item.price}
-                            rating={item.rating}
-                        />
-                    ))}
-                </View>
-            </View>
-            <View className="">
-                <ContainerPerkenalan />
-            </View>
-            (
-            <View className="bg-[#00764F] flex-row justify-between items-center rounded-2xl p-4 mt-6 shadow-md">
-                {/* Left side */}
-                <View className="flex-1 pr-3">
-                    <Text className="text-white text-lg font-semibold mb-1">
-                        Butuh Bantuan?
-                    </Text>
-                    <Text className="text-white/80 text-sm mb-3">
-                        Solusi cepat ada di Pusat Bantuan 💬
-                    </Text>
+                            <Button onPress={handleClose} variant="primary" className="flex-1">
+                                <Text className="text-white font-medium text-center">
+                                    Masukkan Keranjang
+                                </Text>
+                            </Button>
+                        </View>
+                    </View>
+                </BottomSheet>
 
-                    <Button
-                        variant="secondary"
-                        className="bg-white rounded-full px-4 py-2"
-                    >
-                        <Text className="text-[#00764F] font-semibold text-sm">
-                            Cek Pusat Bantuan
-                        </Text>
-                    </Button>
-                </View>
-
-                {/* Right side (icon) */}
-                <Image
-                    source={{
-                        uri: "https://img.icons8.com/plasticine/100/online-store.png",
-                    }}
-                    className="w-20 h-20"
-                    resizeMode="contain"
-                />
-            </View>
-        </ScrollView>
+            )}
+        </>
     );
 }

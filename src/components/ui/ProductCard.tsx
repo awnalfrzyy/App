@@ -1,7 +1,6 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Star, Heart } from "lucide-react-native";
 import { clsx } from "clsx";
-import Skeleton from "./skeleton";
 
 interface CardProps {
     image: string;
@@ -9,9 +8,9 @@ interface CardProps {
     type: string;
     price: number;
     rating: number;
-    variant?: "primary" | "secondary"; // primary = vertical, secondary = horizontal
-    isLoading?: boolean;
-    className?: string;
+    variant?: "primary" | "secondary";
+    onPress?: () => void; // tambahin ini
+    className?: string
 }
 
 export default function ProductCard({
@@ -21,36 +20,15 @@ export default function ProductCard({
     price,
     rating,
     variant = "primary",
-    isLoading = false,
-    className = "",
+    onPress,
+    className,
 }: CardProps) {
-    if (isLoading) {
-        // skeleton
-        return variant === "primary" ? (
-            <View className={clsx("w-[48%] mb-4", className)}>
-                <Skeleton className="w-full h-48 rounded-2xl mb-2" />
-                <Skeleton className="h-4 w-3/4 mb-1 rounded-md" />
-                <Skeleton className="h-3 w-1/2 rounded-md" />
-                <Skeleton className="h-4 w-1/3 rounded-md" />
-            </View>
-        ) : (
-            <View className={clsx("w-full flex-row gap-3 mb-4", className)}>
-                <Skeleton className="w-24 h-24 rounded-2xl" />
-                <View className="flex-1 justify-between py-1">
-                    <Skeleton className="h-4 w-3/4 mb-2 rounded-md" />
-                    <Skeleton className="h-3 w-1/2 mb-1 rounded-md" />
-                    <Skeleton className="h-4 w-1/3 rounded-md" />
-                </View>
-            </View>
-        );
-    }
-
-    // actual card
     const containerClasses = clsx(
-        "rounded-2xl overflow-hidden bg-white",
+        "rounded-2xl overflow-hidden bg-transparent",
         variant === "primary" ? "w-[48%] mb-5" : "w-full flex-row gap-3 mb-4",
-        className
+        className // <-- merge className dari luar
     );
+
 
     const imageClasses = clsx(
         variant === "primary" ? "w-full h-48 rounded-2xl" : "w-24 h-24 rounded-2xl",
@@ -58,24 +36,17 @@ export default function ProductCard({
     );
 
     return (
-        <View className={containerClasses}>
-            <View className={clsx("relative", imageClasses)}>
+        <TouchableOpacity onPress={onPress} activeOpacity={0.8} className={containerClasses}>
+            <View className="relative">
                 <Image source={{ uri: image }} className={clsx(imageClasses)} resizeMode="cover" />
-                <View className="absolute top-1 right-1 bg-transparent p-1 rounded-full">
+                <View className="absolute top-1 right-1 p-1">
                     <Heart size={16} color="red" />
                 </View>
             </View>
 
-            <View className={clsx(variant === "primary" ? "mt-2 gap-1" : "flex-1 justify-between")}>
-                <View className="flex-row justify-between items-start w-full">
-                    <Text
-                        className={clsx(
-                            "text-lg font-semibold text-gray-900 flex-shrink",
-                            variant === "primary" ? "w-full" : "w-4/5"
-                        )}
-                    >
-                        {title}
-                    </Text>
+            <View className={clsx(variant === "primary" ? "mt-2 gap-1 px-1" : "flex-1 justify-between px-2")}>
+                <View className="flex-row justify-between items-center">
+                    <Text className="text-lg font-semibold text-gray-900 flex-shrink">{title}</Text>
                     <View className="flex-row items-center ml-2">
                         <Star size={14} color="yellow" fill="yellow" />
                         <Text className="text-sm text-gray-600 ml-1">{rating.toFixed(1)}</Text>
@@ -87,6 +58,6 @@ export default function ProductCard({
                     Rp{price.toLocaleString("id-ID")}
                 </Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
