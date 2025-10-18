@@ -1,13 +1,15 @@
 import ProductCard from "../ui/ProductCard";
 import Button from "../ui/Button";
-import { View, ScrollView, Text } from "react-native";
+import { View, ScrollView, Text, Image } from "react-native";
 import SearchInput from "../ui/Search-input";
 import { useState } from "react";
 import Header from "../ui/Header";
 import { clsx } from "clsx";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheet from "@/components/ui/Button-sheet";
-import { useSharedValue } from "react-native-reanimated";
+// import { useSharedValue } from "react-native-reanimated";
+import { useBottomSheet } from "@/context/ButtonSheetContext";
+import { MessageCircle } from "lucide-react-native";
 
 const Products = [
     {
@@ -79,12 +81,19 @@ const Btn = [
 export default function MenuScreen() {
     const [query, setQuery] = useState("");
     const [selected, setSelected] = useState<any>(null);
-    const isOpen = useSharedValue(false);
     const insets = useSafeAreaInsets();
+    const { isOpen, openSheet, closeSheet, hideTabBar, showTabBar } = useBottomSheet();
 
     const handleCardPress = (item: any) => {
         setSelected(item);
-        isOpen.value = true;
+        hideTabBar();
+        openSheet();
+    };
+
+    const handleClose = () => {
+        closeSheet();
+        showTabBar();
+        setSelected(null);
     };
 
     return (
@@ -146,21 +155,46 @@ export default function MenuScreen() {
                 </View>
             </ScrollView>
 
-            {/* 🧩 BottomSheet muncul ketika card ditekan */}
-            <BottomSheet isOpen={isOpen} toggleSheet={() => (isOpen.value = !isOpen.value)} >
-                {selected ? (
-                    <View className="p-4">
-                        <Text className="text-xl font-bold mb-2">{selected.title}</Text>
-                        <Text className="text-gray-500 mb-3">{selected.type}</Text>
-                        <Text className="text-green-600 text-lg font-semibold mb-3">
-                            Rp{selected.price.toLocaleString("id-ID")}
-                        </Text>
-                        <Text className="text-gray-700">
-                            Ini bottom sheet dinamis. Lo bisa isi deskripsi produk, tombol beli, dsb.
-                        </Text>
+            {isOpen && (
+                <BottomSheet isOpen={isOpen} toggleSheet={handleClose}
+                    style={{
+                        paddingBottom: insets.bottom,
+                    }}>
+                    <View className="p-1 gap-4 max-h-[80%]">
+                        {selected?.image && (
+                            <View className="w-full aspect-[4/3]">
+                                <Image
+                                    source={{ uri: selected.image }}
+                                    className="w-full h-full rounded-2xl"
+                                    resizeMode="cover"
+                                />
+                            </View>
+                        )}
+                        <View className='mt-2 mb-10 gap-3'>
+                            <Text className="text-3xl font-bold">{selected?.title}</Text>
+                            <Text className="text-gray-700 text-2xl font-black">
+                                Rp. {selected?.price?.toLocaleString("id-ID")}
+                            </Text>
+                            <Text>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, suscipit!
+                            </Text>
+                        </View>
+                        <View className="flex flex-row items-center gap-2 w-full">
+                            <Button onPress={handleClose} variant="primary" className="w-auto">
+                                <MessageCircle size={18} color="#ffffff" />
+                            </Button>
+
+                            <Button onPress={handleClose} variant="primary" className="flex-1">
+                                <Text className="text-white font-medium text-center">
+                                    Masukkan Keranjang
+                                </Text>
+                            </Button>
+                        </View>
                     </View>
-                ) : null}
-            </BottomSheet>
+                </BottomSheet>
+
+            )}
+
         </>
     );
 }

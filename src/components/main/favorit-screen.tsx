@@ -1,19 +1,23 @@
 import { View, ScrollView } from "react-native";
 import Header from "../ui/Header";
 import FavCard from "../ui/Fav-card";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { HomeStackParamList } from "@/navigator/Home-navigator";
-import Button from "../ui/Button";
-import BottomDrawer, { BottomDrawerRef } from '@/components/ui/drawer';
-import { useRef } from "react";
+// import { useNavigation } from "@react-navigation/native";
+// import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+// import { HomeStackParamList } from "@/navigator/Home-navigator";
+// import Button from "../ui/Button";
+// import { useRef } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ArrowLeft } from "lucide-react-native";
+import Tabs from "../ui/Tabs";
 
 
-type NavigationProp = NativeStackNavigationProp<HomeStackParamList, "Favorit">;
+// type NavigationProp = NativeStackNavigationProp<HomeStackParamList, "Favorit">;
 
 export default function FavoritScreen() {
-    const navigation = useNavigation<NavigationProp>();
-    const drawerRef = useRef<BottomDrawerRef>(null);
+    // const navigation = useNavigation<NavigationProp>();
+    const insets = useSafeAreaInsets();
+
+    const TAB_HEIGHT = 70 + insets.top;
 
     const favoriteItems = [
         {
@@ -36,30 +40,32 @@ export default function FavoritScreen() {
 
     return (
         <>
-            <ScrollView className="flex-1 bg-white">
-                <View className="px-4 py-4">
-                    <Header title="Favorit" />
 
-                    {/* Grid 2 kolom */}
-                    <View className="mt-4 flex-row flex-wrap justify-between">
-                        {favoriteItems.map((item) => (
-                            <View key={item.id} className="w-[48%] mb-4">
-                                <FavCard image={item.image} />
-                            </View>
-                        ))}
-                    </View>
+            {/* Tabs fixed di atas */}
+            <Tabs
+                leftIcon={<ArrowLeft size={22} color="black" />}
+                title="Detail Produk"
+            />
 
-                    <Button
-                        variant="primary"
-                        onPress={() => drawerRef.current?.open()}
-                    >
-                        Buka Drawer
-                    </Button>
+            <ScrollView
+                className="flex-1 "
+                contentContainerStyle={{
+                    paddingTop: TAB_HEIGHT, // ini kuncinya
+                    paddingHorizontal: 16,
+                    paddingBottom: 20,
+                }}
+            >
+                <Header title="Favorit" />
+
+                <View className="mt-10 flex-row flex-wrap justify-between">
+                    {favoriteItems.map((item) => (
+                        <View key={item.id} className="w-[48%] mb-4">
+                            <FavCard image={item.image} />
+                        </View>
+                    ))}
                 </View>
             </ScrollView>
 
-            {/* 🪄 Tambahkan ini di luar ScrollView */}
-            <BottomDrawer ref={drawerRef} />
         </>
     );
 }

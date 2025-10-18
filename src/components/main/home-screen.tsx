@@ -7,7 +7,7 @@ import { clsx } from "clsx";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ContainerHeaderHome from "../Container-header-home";
 import BottomSheet from "../ui/Button-sheet";
-import { MessageCircle } from "lucide-react-native";
+import { MessageCircle, Heart } from "lucide-react-native";
 
 const Btn = [
     { title: "Coffee" },
@@ -62,13 +62,13 @@ export default function HomeScreen() {
 
     const handleCardPress = (item: any) => {
         setSelected(item);
-        hideTabBar(); // 🔥 sembunyiin tab
-        openSheet(); // buka sheet
+        hideTabBar();
+        openSheet();
     };
 
     const handleClose = () => {
-        closeSheet(); // tutup sheet
-        showTabBar(); // munculin tab lagi
+        closeSheet();
+        showTabBar();
         setSelected(null);
     };
 
@@ -83,10 +83,20 @@ export default function HomeScreen() {
                 }}
             >
                 <View>
-                    <ContainerHeaderHome />
+                    <View className="pb-3">
+                        <Text className="text-sm text-neutral-400">Good Morning</Text>
+                        <Text className="text-3xl font-semibold text-neutral-800">Aswin Alfarizi</Text>
+                    </View>
+                    <ContainerHeaderHome
+                        buttons={{
+                            fav: {
+                                icon: <Heart size={23} color="red" />,
+                            },
+                        }}
+                    />
+
                 </View>
 
-                {/* Promo Section */}
                 <View className="mb-6">
                     <Text className="text-lg font-semibold mb-3 text-gray-800">
                         Promo Hari Ini
@@ -171,7 +181,6 @@ export default function HomeScreen() {
                 </View>
             </ScrollView>
 
-            {/* Bottom Sheet */}
             {isOpen && (
                 <BottomSheet isOpen={isOpen} toggleSheet={handleClose}
                     style={{

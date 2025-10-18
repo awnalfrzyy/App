@@ -3,30 +3,33 @@ import { useState } from "react";
 import { HomeStackParamList } from "@/navigator/Home-navigator";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import SearchInput from "./ui/Search-input";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import Button from "./ui/Button";
-import { Heart, MessageCircle } from 'lucide-react-native'
-
-interface ComponentProps {
-    btn: boolean;
-    search: boolean;
-    header: boolean;
-}
-
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Favorit'>;
 
-export default function ContainerHeaderHome() {
+interface HeaderButtons {
+    fav?: {
+        icon: React.ReactNode;
+        onPress?: () => void;
+    };
+    notif?: {
+        icon: React.ReactNode;
+        onPress?: () => void;
+    };
+    // bisa tambahin lainnya nanti
+}
 
+interface ComponentProps {
+    buttons?: HeaderButtons; // optional object of icon-buttons
+}
+
+export default function ContainerHeaderHome({ buttons }: ComponentProps) {
     const navigation = useNavigation<NavigationProp>();
     const [query, setQuery] = useState("");
 
     return (
         <View>
-            <View className="pb-5">
-                <Text className="text-sm text-neutral-400">Good Morning</Text>
-                <Text className="text-3xl font-semibold text-neutral-800">Aswin Alfarizi</Text>
-            </View>
             <View className="flex flex-row items-center mb-6">
                 <View className="flex-1">
                     <SearchInput
@@ -37,19 +40,29 @@ export default function ContainerHeaderHome() {
                         className="mr-3 rounded-full"
                     />
                 </View>
-                <View className="flex flex-row gap-1">
-                    <Button variant="secondary" className="rounded-full"
-                        onPress={() => navigation.navigate('Favorit' as never)}>
-                        <Heart size={23} color="red" />
 
-                    </Button>
-                    <Button variant="secondary" className="rounded-full"
-                        onPress={() => navigation.navigate('Detail' as never)}>
-                        <MessageCircle size={23} color="#00746F"
-                        />
-                    </Button>
+                <View className="flex flex-row gap-2">
+                    {buttons?.fav && (
+                        <Button
+                            variant="secondary"
+                            className="rounded-full"
+                            onPress={buttons.fav.onPress || (() => navigation.navigate("Favorit" as never))}
+                        >
+                            {buttons.fav.icon}
+                        </Button>
+                    )}
+
+                    {buttons?.notif && (
+                        <Button
+                            variant="secondary"
+                            className="rounded-full"
+                            onPress={buttons.notif.onPress}
+                        >
+                            {buttons.notif.icon}
+                        </Button>
+                    )}
                 </View>
             </View>
         </View>
-    )
-};
+    );
+}
