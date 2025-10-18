@@ -31,7 +31,7 @@ export default function Skeleton({ className }: Fill) {
     return (
         <Animated.View
             style={{ opacity }}
-            className={`bg-gray-300 rounded-xl overflow-hidden ${className}`}
+            className={`bg-gray-400 rounded-xl overflow-hidden animate-pulse ${className}`}
         />
     );
 }

@@ -17,11 +17,10 @@ interface HeaderButtons {
         icon: React.ReactNode;
         onPress?: () => void;
     };
-    // bisa tambahin lainnya nanti
 }
 
 interface ComponentProps {
-    buttons?: HeaderButtons; // optional object of icon-buttons
+    buttons?: HeaderButtons;
 }
 
 export default function ContainerHeaderHome({ buttons }: ComponentProps) {

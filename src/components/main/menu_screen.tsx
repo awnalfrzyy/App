@@ -1,15 +1,17 @@
 import ProductCard from "../ui/ProductCard";
 import Button from "../ui/Button";
-import { View, ScrollView, Text, Image } from "react-native";
-import SearchInput from "../ui/Search-input";
-import { useState } from "react";
+import { View, ScrollView, Text, Image, FlatList } from "react-native";
+import { useState, useEffect } from "react";
 import Header from "../ui/Header";
+import ContainerHeaderHome from '../Container-header-home';
 import { clsx } from "clsx";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheet from "@/components/ui/Button-sheet";
 // import { useSharedValue } from "react-native-reanimated";
 import { useBottomSheet } from "@/context/ButtonSheetContext";
-import { MessageCircle } from "lucide-react-native";
+import { Loader, MessageCircle } from "lucide-react-native";
+import { withSkeleton } from "@/HOC/withSkeleton";
+import { useSkeletonLoader } from "@/hooks/useSkeletonLoader";
 
 const Products = [
     {
@@ -78,11 +80,17 @@ const Btn = [
     { title: "Dessert" },
 ];
 
+const ProductCardWithSkeleton = withSkeleton(ProductCard, ProductCard);
+
+
 export default function MenuScreen() {
-    const [query, setQuery] = useState("");
     const [selected, setSelected] = useState<any>(null);
     const insets = useSafeAreaInsets();
     const { isOpen, openSheet, closeSheet, hideTabBar, showTabBar } = useBottomSheet();
+    const { data, isLoading } = useSkeletonLoader(Products, 2000);
+
+
+
 
     const handleCardPress = (item: any) => {
         setSelected(item);
@@ -99,7 +107,7 @@ export default function MenuScreen() {
     return (
         <>
             <ScrollView
-                className="bg-white z-10"
+                className="bg-white z-10 px-4"
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
                     paddingBottom: insets.bottom + 20,
@@ -107,53 +115,46 @@ export default function MenuScreen() {
                 }}
             >
                 <View className="px-4 flex-1 bg-white">
-                    <View className="py-10">
-                        <Header title="Menu" />
-                    </View>
+                    <Header title="Menu" />
+                    <ContainerHeaderHome />
+                </View>
 
-                    <View className="flex-1 mb-4">
-                        <SearchInput
-                            placeholder="Cari menu favorit kamu..."
-                            value={query}
-                            onChangeText={setQuery}
-                            onClear={() => setQuery("")}
-                            className="mr-3 rounded-full"
-                        />
-                    </View>
-
-                    <View className="flex flex-col gap-3 mb-6 py-1">
-                        <Text className="text-lg font-medium">Category</Text>
-                        <View className="flex flex-row gap-2 mb-6">
-                            {Btn.map((item, index) => (
-                                <Button
-                                    key={index}
-                                    variant={item.title === "Coffee" ? "primary" : "secondary"}
-                                    className={clsx(
-                                        "px-5 rounded-full",
-                                        item.title === "Coffee" ? "text-white" : "text-neutral-900"
-                                    )}
-                                >
-                                    {item.title}
-                                </Button>
-                            ))}
-                        </View>
-                    </View>
-
-                    <View className="flex flex-row flex-wrap justify-between">
-                        {Products.map((item, i) => (
-                            <ProductCard
-                                key={i}
-                                image={item.image}
-                                title={item.title}
-                                type={item.type}
-                                price={item.price}
-                                rating={item.rating}
-                                onPress={() => handleCardPress(item)} // 🧠 di sini kuncinya
-                            />
+                <View className="flex flex-col gap-3 mb-6 py-1">
+                    <Text className="text-lg font-medium">Category</Text>
+                    <View className="flex flex-row gap-2 mb-6">
+                        {Btn.map((item, index) => (
+                            <Button
+                                key={index}
+                                variant={item.title === "Coffee" ? "primary" : "secondary"}
+                                className={clsx(
+                                    "px-5 rounded-full",
+                                    item.title === "Coffee" ? "text-white" : "text-neutral-900"
+                                )}
+                            >
+                                {item.title}
+                            </Button>
                         ))}
                     </View>
                 </View>
-            </ScrollView>
+
+                <FlatList
+                    scrollEnabled={false}
+                    numColumns={2}
+                    columnWrapperStyle={{ justifyContent: "space-between", marginBottom: 16 }}
+                    data={isLoading ? Array(3).fill({}) : data}
+                    renderItem={({ item }) => (
+                        <ProductCardWithSkeleton
+                            isLoading={isLoading}
+                            image={item.image}
+                            title={item.title}
+                            type={item.type}
+                            price={item.price}
+                            rating={item.rating}
+                        />
+                    )}
+                />
+
+            </ScrollView >
 
             {isOpen && (
                 <BottomSheet isOpen={isOpen} toggleSheet={handleClose}
@@ -192,9 +193,8 @@ export default function MenuScreen() {
                         </View>
                     </View>
                 </BottomSheet>
-
-            )}
-
+            )
+            }
         </>
     );
 }

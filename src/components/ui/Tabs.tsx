@@ -6,7 +6,7 @@ import Button from "./Button";
 
 interface TabsProps {
     title?: string;
-    leftIcon: React.ReactNode; // wajib
+    leftIcon: React.ReactNode;
     rightIcon?: React.ReactNode;
     onRightPress?: () => void;
 }

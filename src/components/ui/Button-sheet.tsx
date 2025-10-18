@@ -3,8 +3,6 @@ import { View, StyleProp, ViewStyle, TouchableWithoutFeedback, Animated, Dimensi
 import { Easing } from 'react-native-reanimated';
 
 const screenHeight = Dimensions.get('window').height;
-
-// ✅ Tambahin type props di sini
 interface BottomSheetProps {
     isOpen: boolean;
     toggleSheet: () => void;

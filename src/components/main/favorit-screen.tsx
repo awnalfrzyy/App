@@ -40,8 +40,6 @@ export default function FavoritScreen() {
 
     return (
         <>
-
-            {/* Tabs fixed di atas */}
             <Tabs
                 leftIcon={<ArrowLeft size={22} color="black" />}
                 title="Detail Produk"
@@ -50,7 +48,7 @@ export default function FavoritScreen() {
             <ScrollView
                 className="flex-1 "
                 contentContainerStyle={{
-                    paddingTop: TAB_HEIGHT, // ini kuncinya
+                    paddingTop: TAB_HEIGHT,
                     paddingHorizontal: 16,
                     paddingBottom: 20,
                 }}

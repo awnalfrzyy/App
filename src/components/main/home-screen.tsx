@@ -1,8 +1,10 @@
-import { View, Text, ScrollView, Image } from 'react-native';
+import { View, Text, ScrollView, Image, FlatList } from 'react-native';
 import Button from "../ui/Button";
 import ProductCard from "@/components/ui/ProductCard";
 import { useBottomSheet } from "@/context/ButtonSheetContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { withSkeleton } from '@/HOC/withSkeleton';
+import { useSkeletonLoader } from '@/hooks/useSkeletonLoader';
 import { clsx } from "clsx";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ContainerHeaderHome from "../Container-header-home";
@@ -55,10 +57,16 @@ const Products = [
     },
 ];
 
+const ProductCardWithSkeleton = withSkeleton(ProductCard, ProductCard);
+
 export default function HomeScreen() {
     const insets = useSafeAreaInsets();
     const [selected, setSelected] = useState<any>(null);
     const { isOpen, openSheet, closeSheet, hideTabBar, showTabBar } = useBottomSheet();
+
+    const { data, isLoading } = useSkeletonLoader(Products, 2000);
+
+
 
     const handleCardPress = (item: any) => {
         setSelected(item);
@@ -136,22 +144,25 @@ export default function HomeScreen() {
                     <Text className="text-lg font-semibold mb-3 text-gray-800">
                         Rekomendasi Untuk Kamu
                     </Text>
-                    <View className="flex flex-row flex-wrap justify-between ">
-                        {Products.map((item, i) => (
-                            <ProductCard
-                                key={i}
+                    <FlatList
+                        scrollEnabled={false}
+                        numColumns={2}
+                        columnWrapperStyle={{ justifyContent: "space-between", marginBottom: 16 }}
+                        data={isLoading ? Array(3).fill({}) : data}
+                        renderItem={({ item }) => (
+                            <ProductCardWithSkeleton
+                                isLoading={isLoading}
                                 image={item.image}
                                 title={item.title}
                                 type={item.type}
                                 price={item.price}
                                 rating={item.rating}
-                                onPress={() => handleCardPress(item)}
                             />
-                        ))}
-                    </View>
+                        )}
+                    />
+
                 </View>
 
-                {/* Bantuan */}
                 <View className="bg-[#00764F] flex-row justify-between items-center rounded-2xl p-4 mt-6 shadow-md">
                     <View className="pr-3">
                         <Text className="text-white text-lg font-semibold mb-1">

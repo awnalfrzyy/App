@@ -13,11 +13,10 @@ export default function NotificationScreen() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // simulasi fetch API
         setTimeout(() => {
             setData(notifications);
             setLoading(false);
-        }, 5000); // 2 detik loading
+        }, 5000);
     }, []);
 
     return (
